@@ -1,10 +1,10 @@
-Autoswitch Python Virtualenv
+Autoswitch Python Conda
 ============================
 
 |TravisCI| |Release| |GPLv3|
 
-*zsh-autoswitch-virtualenv* is a simple ZSH plugin that switches python
-virtualenvs automatically as you move between directories.
+*zsh-autoswitch-conda* is a simple ZSH plugin (which is modified from `zsh-autoswitch-virtualenv <https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv/>`__)
+that switches conda environments automatically as you move between directories.
 
 * `How it Works`_
 * `More Details`_
@@ -19,8 +19,8 @@ virtualenvs automatically as you move between directories.
 How it Works
 ------------
 
-Simply call the ``mkvenv`` command in the directory you wish to setup a
-virtual environment. A virtual environment specific to that folder will
+Simply call the ``mkcenv`` command in the directory you wish to setup a
+conda environment. A conda environment specific to that folder will
 now activate every time you enter it.
 
 See the *Commands* section below for more detail.
@@ -28,18 +28,18 @@ See the *Commands* section below for more detail.
 More Details
 ------------
 
-Moving out of the directory will automatically deactivate the virtual
-environment. However you can also switch to a default python virtual
-environment instead by setting the ``AUTOSWITCH_DEFAULTENV`` environment
+Moving out of the directory will automatically deactivate the conda
+environment. However you can also switch to a default python conda
+environment instead by setting the ``AUTOSWITCH_DEFAULT_CONDAENV`` environment
 variable.
 
-Internally this plugin simply works by creating a file named ``.venv``
-which contains the name of the virtual environment created (which is the
+Internally this plugin simply works by creating a file named ``.cenv``
+which contains the name of the conda environment created (which is the
 same name as the current directory but can be edited if needed). There
-is then a precommand hook that looks for a ``.venv`` file and switches
+is then a precommand hook that looks for a ``.cenv`` file and switches
 to the name specified if one is found.
 
-**NOTE**: you may want to add ``.venv`` to your ``.gitignore`` in git
+**NOTE**: you may want to add ``.cenv`` to your ``.gitignore`` in git
 projects (or equivalent file for the Version Control you are using).
 
 Installing
@@ -52,154 +52,172 @@ ZPlug_
 
 ::
 
-    zplug "MichaelAquilina/zsh-autoswitch-virtualenv"
+    zplug "bckim92/zsh-autoswitch-conda"
 
 Antigen_
 
 ::
 
-    antigen bundle "MichaelAquilina/zsh-autoswitch-virtualenv"
+    antigen bundle "bckim92/zsh-autoswitch-conda"
 
 Zgen_
 
 ::
 
-    zgen load "MichaelAquilina/zsh-autoswitch-virtualenv"
+    zgen load "MichaelAquilina/zsh-autoswitch-conda"
 
 Setup
 -----
 
-``virtualenvwrapper`` must be installed for this plugin to work
-correctly. You should install it with pip:
+``conda`` must be installed for this plugin to work correctly.
+You can find installation instructions from `official conda user guide<https://conda.io/docs/user-guide/install/index.html#installation>__`.
+For example, in linux 64-bit environment, you can install Miniconda-python3 as follows:
 
 ::
 
-    pip install virtualenvwrapper
+    # https://conda.io/miniconda.html
+    set -e
+    MINICONDA_VERSION="4.5.4"
 
-You need to source this file in your ``.zshrc`` file as part of your
-setup. This should work:
+    # https://repo.continuum.io/miniconda/
+    TMP_DIR="/tmp/$USER/miniconda/"; mkdir -p $TMP_DIR && cd ${TMP_DIR}
+    wget -nc "https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
+
+    # will install at $HOME/.miniconda3 (see zsh config for PATH)
+    MINICONDA_PREFIX="$HOME/.miniconda3/"
+    bash "Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh" -b -p ${MINICONDA_PREFIX}
+
+    $MINICONDA_PREFIX/bin/python --version
+
+You need to add environment variables for conda to your ``.zshenv`` file as part of your
+setup. For example,
 
 ::
 
-    source =virtualenvwrapper.sh
+    . YOUR_CONDA_PATH/etc/profile.d/conda.sh
 
 **IMPORTANT:** Make sure this is put *before* your package manager loading code (i.e. the
 line of code discussed in the section that follows).
 
-In combination, your ``.zshrc`` file should look something like this (if you
-are using zplug)
-
-::
-
-    zplug "MichaelAquilina/zsh-autoswitch-virtualenv"
-    source =virtualenvwrapper.sh
-
-    zplug load
-
 Commands
 --------
 
-mkvenv
+mkcenv
 ''''''
 
-Setup a new project with virtualenv autoswitching using the ``mkvenv``
+Setup a new project with conda envirionment autoswitching using the ``mkcenv``
 helper command.
 
 ::
 
     $ cd my-python-project
-    $ mkvenv
-    Using real prefix '/usr'
-    New python executable in /home/michael/.virtualenvs/my-python-project/bin/python2
-    Also creating executable in /home/michael/.virtualenvs/my-python-project/bin/python
-    Installing setuptools, pip, wheel...done.
-    Found a requirements.txt. Install? [y/N]:
-    Collecting requests (from -r requirements.txt (line 1))
-      Using cached requests-2.11.1-py2.py3-none-any.whl
-    Installing collected packages: requests
-    Successfully installed requests-2.11.1
+    $ mkcenv
+    Solving environment: done
+    ## Package Plan ##
+    environment location: /home/bckim92/.miniconda3/envs/my-python-project
+    added / updated specs:
+      - python=3.5
+    The following NEW packages will be INSTALLED:
+        ca-certificates: 2018.03.07-0
+        certifi:         2018.4.16-py35_0
+        libedit:         3.1.20170329-h6b74fdf_2
+        libffi:          3.2.1-hd88cf55_4
+        libgcc-ng:       7.2.0-hdf63c60_3
+        libstdcxx-ng:    7.2.0-hdf63c60_3
+        ncurses:         6.1-hf484d3e_0
+        openssl:         1.0.2o-h20670df_0
+        pip:             10.0.1-py35_0
+        python:          3.5.5-hc3d631a_4
+        readline:        7.0-ha6073c6_4
+        setuptools:      39.2.0-py35_0
+        sqlite:          3.24.0-h84994c4_0
+        tk:              8.6.7-hc745277_3
+        wheel:           0.31.1-py35_0
+        xz:              5.2.4-h14c3975_4
+        zlib:            1.2.11-ha838bed_2
+    Proceed ([y]/n)?
 
-Optionally, you can specify the python binary to use for this virtual environment
+Optionally, you can specify the python binary to use for this conda environment
 
 ::
 
-    $ mkvenv --python=/usr/bin/python3
+    $ mkcenv python=3.5
 
-In fact, ``mkvenv`` supports any parameters that can be passed to ``mkvirtualenv``
+In fact, ``mkcenv`` supports any parameters that can be passed to ``conda create``
 
-``mkvenv`` will create a virtual environment with the same name as the
+``mkcenv`` will create a conda environment with the same name as the
 current directory, suggest installing ``requirements.txt`` if available
-and create the relevant ``.venv`` file for you.
+and create the relevant ``.cenv`` file for you.
 
 Next time you switch to that folder, you'll see the following message
 
 ::
 
     $ cd my-python-project
-    Switching virtualenv: my-python-project  [Python 3.4.3+]
+    Switching conda environment: my-python-project  [Python 3.5.5 :: Anaconda, Inc.]
     $
 
-If you have set the ``AUTOSWITCH_DEFAULTENV`` environment variable,
+If you have set the ``AUTOSWITCH_DEFAULT_CONDAENV`` environment variable,
 exiting that directory will switch back to the value set.
 
 ::
 
     $ cd ..
-    Switching virtualenv: mydefaultenv  [Python 3.4.3+]
+    Switching conda environment: mydefaultenv  [Python 3.5.5 :: Anaconda, Inc.]
     $
 
-Otherwise, ``deactivate`` will simply be called on the virtualenv to
+Otherwise, ``conda deactivate`` will simply be called on the conda to
 switch back to the global python environment.
 
 Autoswitching is smart enough to detect that you have traversed to a
-project subdirectory. So your virtualenv will not be deactivated if you
+project subdirectory. So your conda environment will not be deactivated if you
 enter a subdirectory.
 
 ::
 
     $ cd my-python-project
-    Switching virtualenv: my-python-project  [Python 3.4.3+]
+    Switching conda environment: my-python-project  [Python 3.4.3+]
     $ cd src
-    $ # Notice how this has not deactivated the project virtualenv
+    $ # Notice how this has not deactivated the project conda environment
     $ cd ../..
-    Switching virtualenv: mydefaultenv  [Python 3.4.3+]
-    $ # exited the project parent folder, so the virtualenv is now deactivated
+    Switching conda environment: mydefaultenv  [Python 3.4.3+]
+    $ # exited the project parent folder, so the conda environment is now deactivated
 
-rmvenv
+rmcenv
 ''''''
 
-You can remove the virtual environment for a directory you are currently
-in using the ``rmvenv`` helper function:
+You can remove the conda environment for a directory you are currently
+in using the ``rmcenv`` helper function:
 
 ::
 
     $ cd my-python-project
-    $ rmvenv
-    Switching virtualenv: mydefaultenv  [Python 2.7.12]
+    $ rmcenv
+    Switching conda environment: mydefaultenv  [Python 2.7.12]
     Removing myproject...
 
-This will delete the virtual environment in ``.venv`` and remove the
-``.venv`` file itself. The ``rmvenv`` command will fail if there is no
-``.venv`` file in the current directory:
+This will delete the conda environment in ``.cenv`` and remove the
+``.cenv`` file itself. The ``rmcenv`` command will fail if there is no
+``.cenv`` file in the current directory:
 
 ::
 
     $ cd my-non-python-project
-    $ rmvenv
-    No .venv file in the current directory!
+    $ rmcenv
+    No .cenv file in the current directory!
 
 Options
 -------
 
-**Setting a default virtual environment**
+**Setting a default conda environment**
 
-If you want to set a default virtual environment then you can also
-export ``AUTOSWITCH_DEFAULTENV`` in your ``.zshrc`` file.
+If you want to set a default conda environment then you can also
+export ``AUTOSWITCH_DEFAULT_CONDAENV`` in your ``.zshrc`` file.
 
 ::
 
-    export AUTOSWITCH_DEFAULTENV="mydefaultenv"
-    antigen bundle MichaelAquilina/zsh-autoswitch-virtualenv
+    export AUTOSWITCH_DEFAULT_CONDAENV="mydefaultenv"
+    antigen bundle bckim92/zsh-autoswitch-conda
 
 **Set verbosity when changing environments**
 
@@ -210,21 +228,21 @@ a non-empty value.
 Security Warnings
 -----------------
 
-zsh-autoswitch-virtualenv will warn you and refuse to activate a virtual
+zsh-autoswitch-conda will warn you and refuse to activate a conda
 envionrment automatically in the following situations:
 
--  You are not the owner of the ``.venv`` file found in a directory.
--  The ``.venv`` file has weak permissions. I.e. it is readable or
+-  You are not the owner of the ``.cenv`` file found in a directory.
+-  The ``.cenv`` file has weak permissions. I.e. it is readable or
    writable by other users on the system.
 
 In both cases, the warnings should explain how to fix the problem.
 
 These are security measures that prevents other, potentially malicious
-users, from switching you to a virtual environment you did not want to
+users, from switching you to a conda environment you did not want to
 switch to.
 
-Running Tests
--------------
+Running Tests (not available now)
+---------------------------------
 
 Install `zunit <https://zunit.xyz/>`__. Run ``zunit`` in the root
 directory of the repo.
@@ -258,3 +276,9 @@ NOTE: It is required that you use a minimum zunit version of 0.8.2
 
 .. |GPLv3| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
    :target: https://www.gnu.org/licenses/gpl-3.0
+
+TODO
+----
+
+-  Modify test code
+-  Modify TravisCI and Release image
