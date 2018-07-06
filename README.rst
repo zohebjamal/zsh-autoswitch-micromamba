@@ -13,7 +13,7 @@ that switches conda environments automatically as you move between directories.
 * Commands_
 * Options_
 * `Security Warnings`_
-* `Running Tests`_
+* `Running Tests (not available now)`_
 
 
 How it Works
@@ -64,13 +64,13 @@ Zgen_
 
 ::
 
-    zgen load "MichaelAquilina/zsh-autoswitch-conda"
+    zgen load "bckim92/zsh-autoswitch-conda"
 
 Setup
 -----
 
 ``conda`` must be installed for this plugin to work correctly.
-You can find installation instructions from `official conda user guide<https://conda.io/docs/user-guide/install/index.html#installation>__`.
+You can find installation instructions from `official conda user guide <https://conda.io/docs/user-guide/install/index.html#installation>`__.
 For example, in linux 64-bit environment, you can install Miniconda-python3 as follows:
 
 ::
