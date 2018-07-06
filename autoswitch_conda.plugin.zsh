@@ -52,11 +52,12 @@ function _check_cenv_path()
 # Automatically switch conda environment when .cenv file detected
 function check_cenv()
 {
-    if [ "AS:$PWD" != "$MYOLDPWD" ]; then
-        # Prefix PWD with "AS:" to signify this belongs to this plugin
+    if [ "AS_CENV:$PWD" != "$MYOLDPWD" ]; then
+        # Prefix PWD with "AS_CENV:" to signify this belongs to this plugin
         # this prevents the AUTONAMEDIRS in prezto from doing strange things
+        # (Since zsh-autoswitch-virtualenv use "AS:" prefix, we instead use "AS_CENV:"
         # See https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv/issues/19
-        MYOLDPWD="AS:$PWD"
+        MYOLDPWD="AS_CENV:$PWD"
 
         SWITCH_TO=""
 
