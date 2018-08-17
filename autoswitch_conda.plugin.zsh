@@ -137,6 +137,7 @@ function mkcenv()
   else
     cenv_name="$(basename $PWD)"
     conda create --name "$cenv_name" $@
+    conda activate "$cenv_name"
 
     setopt nullglob
     for requirements in *requirements.txt
