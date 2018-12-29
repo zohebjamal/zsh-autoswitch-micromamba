@@ -142,13 +142,26 @@ function mkcenv()
     setopt nullglob
     for requirements in *requirements.txt
     do
-      printf "Found a %s file. Install? [y/N]: " "$requirements"
+      printf "Found a %s file. Install using pip? [y/N]: " "$requirements"
       read ans
 
       if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
         pip install -r "$requirements"
       fi
     done
+
+    # Sample yml file can be found at
+    # https://github.com/vithursant/deep-learning-conda-envs/blob/master/tf-py3p6-env.yml
+    for requirements in *requirements.yml
+    do
+      printf "Found a %s file. Install using conda? [y/N]: " "$requirements"
+      read ans
+
+      if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
+        conda env update -f "$requirements"
+      fi
+    done
+
     printf "$cenv_name\n" > ".cenv"
     chmod 600 .cenv
     AUTOSWITCH_PROJECT="$PWD"
