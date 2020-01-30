@@ -161,6 +161,15 @@ function mkcenv()
         conda env update -f "$requirements"
       fi
     done
+    for requirements in *environment.yml
+    do
+      printf "Found a %s file. Install using conda? [y/N]: " "$requirements"
+      read ans
+
+      if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
+        conda env update -f "$requirements"
+      fi
+    done
 
     printf "$cenv_name\n" > ".cenv"
     chmod 600 .cenv
