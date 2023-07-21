@@ -1,9 +1,9 @@
 export AUTOSWITCH_CENV_VERSION='0.3.4'
 
-if ! type conda > /dev/null; then
+if ! type micromamba > /dev/null; then
     export DISABLE_AUTOSWITCH_CENV="1"
     printf "\e[1m\e[31m"
-    printf "zsh-autoswitch-conda requires conda to be installed!\n\n"
+    printf "zsh-autoswitch-micromamba requires micromamba to be installed!\n\n"
     printf "\e[0m\e[39m"
     printf "If this is already installed but you are still seeing this message, \nadd the "
     printf "following to your ~/.zshenv:\n\n"
@@ -17,12 +17,12 @@ if ! type conda > /dev/null; then
 fi
 
 function _maybeactivate() {
-  if [[ -z "$CONDA_DEFAULT_ENV" || "$1" != "$(basename $CONDA_DEFAULT_ENV)" ]]; then
+  if [[ -z "$MICROMAMBA_DEFAULT_ENV" || "$1" != "$(basename $MICROMAMBA_DEFAULT_ENV)" ]]; then
      if [ -z "$AUTOSWITCH_SILENT" ]; then
-        printf "Switching conda environment: %s  " $1
+        printf "Switching micromamba environment: %s  " $1
      fi
 
-     conda activate "$1"
+     micromamba activate "$1"
 
      if [ -z "$AUTOSWITCH_SILENT" ]; then
        # For some reason python --version writes to st derr
@@ -49,7 +49,7 @@ function _check_cenv_path()
 }
 
 
-# Automatically switch conda environment when .cenv file detected
+# Automatically switch micromamba environment when .cenv file detected
 function check_cenv()
 {
     if [ "AS_CENV:$PWD" != "$MYOLDPWD" ]; then
@@ -75,11 +75,11 @@ function check_cenv()
           fi
 
           if [[ "$file_owner" != "$(id -u)" ]]; then
-            printf "AUTOSWITCH WARNING: Conda environment will not be activated\n\n"
+            printf "AUTOSWITCH WARNING: Micromamba environment will not be activated\n\n"
             printf "Reason: Found a .cenv file but it is not owned by the current user\n"
             printf "Change ownership of $cenv_path to '$USER' to fix this\n"
           elif [[ "$file_permissions" != "600" ]]; then
-            printf "AUTOSWITCH WARNING: Conda environment will not be activated\n\n"
+            printf "AUTOSWITCH WARNING: Micromamba environment will not be activated\n\n"
             printf "Reason: Found a .cenv file with weak permission settings ($file_permissions).\n"
             printf "Run the following command to fix this: \"chmod 600 $cenv_path\"\n"
           else
@@ -95,33 +95,33 @@ function check_cenv()
     fi
 }
 
-# Switch to the default conda environment
+# Switch to the default micromamba environment
 function _default_cenv()
 {
-  if [[ -n "$AUTOSWITCH_DEFAULT_CONDAENV" ]]; then
-     _maybeactivate "$AUTOSWITCH_DEFAULT_CONDAENV"
-  elif [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-      conda deactivate
+  if [[ -n "$AUTOSWITCH_DEFAULT_MICROMAMBAENV" ]]; then
+     _maybeactivate "$AUTOSWITCH_DEFAULT_MICROMAMBAENV"
+  elif [[ -n "$MICROMAMBA_DEFAULT_ENV" ]]; then
+      micromamba deactivate
   fi
 }
 
 
-# remove conda environment for current directory
+# remove micromamba environment for current directory
 function rmcenv()
 {
   if [[ -f ".cenv" ]]; then
 
     cenv_name="$(<.cenv)"
 
-    # detect if we need to switch conda environment first
-    if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
-        current_cenv="$(basename $CONDA_DEFAULT_ENV)"
+    # detect if we need to switch micromamba environment first
+    if [[ -n "$MICROMAMBA_DEFAULT_ENV" ]]; then
+        current_cenv="$(basename $MICROMAMBA_DEFAULT_ENV)"
         if [[ "$current_cenv" = "$cenv_name" ]]; then
             _default_cenv
         fi
     fi
 
-    conda env remove --name "$cenv_name"
+    micromamba env remove --name "$cenv_name"
     rm ".cenv"
   else
     printf "No .cenv file in the current directory!\n"
@@ -129,15 +129,15 @@ function rmcenv()
 }
 
 
-# helper function to create a conda environment for the current directory
+# helper function to create a micromamba environment for the current directory
 function mkcenv()
 {
   if [[ -f ".cenv" ]]; then
     printf ".cenv file already exists. If this is a mistake use the rmcenv command\n"
   else
     cenv_name="$(basename $PWD)"
-    conda create --name "$cenv_name" $@
-    conda activate "$cenv_name"
+    micromamba create --name "$cenv_name" $@
+    micromamba activate "$cenv_name"
 
     setopt nullglob
     for requirements in *requirements.txt
@@ -151,23 +151,23 @@ function mkcenv()
     done
 
     # Sample yml file can be found at
-    # https://github.com/vithursant/deep-learning-conda-envs/blob/master/tf-py3p6-env.yml
+    # https://github.com/vithursant/deep-learning-micromamba-envs/blob/master/tf-py3p6-env.yml
     for requirements in *requirements.yml
     do
-      printf "Found a %s file. Install using conda? [y/N]: " "$requirements"
+      printf "Found a %s file. Install using micromamba? [y/N]: " "$requirements"
       read ans
 
       if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
-        conda env update -f "$requirements"
+        micromamba env update -f "$requirements"
       fi
     done
     for requirements in *environment.yml
     do
-      printf "Found a %s file. Install using conda? [y/N]: " "$requirements"
+      printf "Found a %s file. Install using micromamba? [y/N]: " "$requirements"
       read ans
 
       if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
-        conda env update -f "$requirements"
+        micromamba env update -f "$requirements"
       fi
     done
 
