@@ -1,10 +1,10 @@
-Autoswitch Python Conda
+Autoswitch Python micromamba
 ============================
 
 |TravisCI| |Release| |GPLv3|
 
-*zsh-autoswitch-conda* is a simple ZSH plugin (which is modified from `zsh-autoswitch-virtualenv <https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv/>`__)
-that switches conda environments automatically as you move between directories.
+*zsh-autoswitch-micromamba* is a simple ZSH plugin (which is modified from `zsh-autoswitch-micromamba <https://github.com/bckim92/zsh-autoswitch-micromamba>`)
+that switches micromamba environments automatically as you move between directories.
 
 * `How it Works`_
 * `More Details`_
@@ -13,14 +13,13 @@ that switches conda environments automatically as you move between directories.
 * Commands_
 * Options_
 * `Security Warnings`_
-* `Running Tests (not available now)`_
 
 
 How it Works
 ------------
 
-Simply call the ``mkcenv`` command in the directory you wish to setup a
-conda environment. A conda environment specific to that folder will
+Simply call the ``mkmenv`` command in the directory you wish to setup a
+micromamba environment. A micromamba environment specific to that folder will
 now activate every time you enter it.
 
 See the *Commands* section below for more detail.
@@ -28,18 +27,18 @@ See the *Commands* section below for more detail.
 More Details
 ------------
 
-Moving out of the directory will automatically deactivate the conda
-environment. However you can also switch to a default python conda
-environment instead by setting the ``AUTOSWITCH_DEFAULT_CONDAENV`` environment
+Moving out of the directory will automatically deactivate the micromamba
+environment. However you can also switch to a default python micromamba
+environment instead by setting the ``AUTOSWITCH_DEFAULT_MICROMAMBAENV`` environment
 variable.
 
-Internally this plugin simply works by creating a file named ``.cenv``
-which contains the name of the conda environment created (which is the
+Internally this plugin simply works by creating a file named ``.menv``
+which contains the name of the micromamba environment created (which is the
 same name as the current directory but can be edited if needed). There
-is then a precommand hook that looks for a ``.cenv`` file and switches
+is then a precommand hook that looks for a ``.menv`` file and switches
 to the name specified if one is found.
 
-**NOTE**: you may want to add ``.cenv`` to your ``.gitignore`` in git
+**NOTE**: you may want to add ``.menv`` to your ``.gitignore`` in git
 projects (or equivalent file for the Version Control you are using).
 
 Installing
@@ -52,69 +51,43 @@ ZPlug_
 
 ::
 
-    zplug "bckim92/zsh-autoswitch-conda"
+    zplug "zohebjamal/zsh-autoswitch-micromamba"
 
 Antigen_
 
 ::
 
-    antigen bundle "bckim92/zsh-autoswitch-conda"
+    antigen bundle "zohebjamal/zsh-autoswitch-micromamba"
 
 Zgen_
 
 ::
 
-    zgen load "bckim92/zsh-autoswitch-conda"
+    zgen load "zohebjamal/zsh-autoswitch-micromamba"
 
 Setup
 -----
 
-``conda`` must be installed for this plugin to work correctly.
-You can find installation instructions from `official conda user guide <https://conda.io/docs/user-guide/install/index.html#installation>`__.
-For example, in linux 64-bit environment, you can install Miniconda-python3 as follows:
+``micromamba`` must be installed for this plugin to work correctly.
+You can find installation instructions from `official mamba user guide <https://mamba.readthedocs.io/en/latest/installation.html>`__.
 
-::
-
-    # https://conda.io/miniconda.html
-    set -e
-    MINICONDA_VERSION="4.5.4"
-
-    # https://repo.continuum.io/miniconda/
-    TMP_DIR="/tmp/$USER/miniconda/"; mkdir -p $TMP_DIR && cd ${TMP_DIR}
-    wget -nc "https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh"
-
-    # will install at $HOME/.miniconda3 (see zsh config for PATH)
-    MINICONDA_PREFIX="$HOME/.miniconda3/"
-    bash "Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh" -b -p ${MINICONDA_PREFIX}
-
-    $MINICONDA_PREFIX/bin/python --version
-
-You need to add environment variables for conda to your ``.zshenv`` file as part of your
-setup. For example,
-
-::
-
-    . YOUR_CONDA_PATH/etc/profile.d/conda.sh
-
-**IMPORTANT:** Make sure this is put *before* your package manager loading code (i.e. the
-line of code discussed in the section that follows).
 
 Commands
 --------
 
-mkcenv
+mkmenv
 ''''''
 
-Setup a new project with conda envirionment autoswitching using the ``mkcenv``
+Setup a new project with micromamba envirionment autoswitching using the ``mkmenv``
 helper command.
 
 ::
 
     $ cd my-python-project
-    $ mkcenv
+    $ mkmenv
     Solving environment: done
     ## Package Plan ##
-    environment location: /home/bckim92/.miniconda3/envs/my-python-project
+    environment location: /home/<name>/.micromamba/envs/my-python-project
     added / updated specs:
       - python=3.5
     The following NEW packages will be INSTALLED:
@@ -137,87 +110,87 @@ helper command.
         zlib:            1.2.11-ha838bed_2
     Proceed ([y]/n)?
 
-Optionally, you can specify the python binary to use for this conda environment
+Optionally, you can specify the python binary to use for this micromamba environment
 
 ::
 
-    $ mkcenv python=3.5
+    $ mkmenv python=3.5
 
-In fact, ``mkcenv`` supports any parameters that can be passed to ``conda create``
+In fact, ``mkmenv`` supports any parameters that can be passed to ``micromamba create``
 
-``mkcenv`` will create a conda environment with the same name as the
+``mkmenv`` will create a micromamba environment with the same name as the
 current directory, suggest installing ``requirements.txt`` if available
-and create the relevant ``.cenv`` file for you.
+and create the relevant ``.menv`` file for you.
 
 Next time you switch to that folder, you'll see the following message
 
 ::
 
     $ cd my-python-project
-    Switching conda environment: my-python-project  [Python 3.5.5 :: Anaconda, Inc.]
+    Switching micromamba environment: my-python-project  [Python 3.5.5 :: Anamicromamba, Inc.]
     $
 
-If you have set the ``AUTOSWITCH_DEFAULT_CONDAENV`` environment variable,
+If you have set the ``AUTOSWITCH_DEFAULT_MICROMAMBAENV`` environment variable,
 exiting that directory will switch back to the value set.
 
 ::
 
     $ cd ..
-    Switching conda environment: mydefaultenv  [Python 3.5.5 :: Anaconda, Inc.]
+    Switching micromamba environment: mydefaultenv 
     $
 
-Otherwise, ``conda deactivate`` will simply be called on the conda to
+Otherwise, ``micromamba deactivate`` will simply be called on the micromamba to
 switch back to the global python environment.
 
 Autoswitching is smart enough to detect that you have traversed to a
-project subdirectory. So your conda environment will not be deactivated if you
+project subdirectory. So your micromamba environment will not be deactivated if you
 enter a subdirectory.
 
 ::
 
     $ cd my-python-project
-    Switching conda environment: my-python-project  [Python 3.4.3+]
+    Switching micromamba environment: my-python-project  [Python 3.4.3+]
     $ cd src
-    $ # Notice how this has not deactivated the project conda environment
+    $ # Notice how this has not deactivated the project micromamba environment
     $ cd ../..
-    Switching conda environment: mydefaultenv  [Python 3.4.3+]
-    $ # exited the project parent folder, so the conda environment is now deactivated
+    Switching micromamba environment: mydefaultenv  [Python 3.4.3+]
+    $ # exited the project parent folder, so the micromamba environment is now deactivated
 
-rmcenv
+rmmenv
 ''''''
 
-You can remove the conda environment for a directory you are currently
-in using the ``rmcenv`` helper function:
+You can remove the micromamba environment for a directory you are currently
+in using the ``rmmenv`` helper function:
 
 ::
 
     $ cd my-python-project
-    $ rmcenv
-    Switching conda environment: mydefaultenv  [Python 2.7.12]
+    $ rmmenv
+    Switching micromamba environment: mydefaultenv  [Python 2.7.12]
     Removing myproject...
 
-This will delete the conda environment in ``.cenv`` and remove the
-``.cenv`` file itself. The ``rmcenv`` command will fail if there is no
-``.cenv`` file in the current directory:
+This will delete the micromamba environment in ``.menv`` and remove the
+``.menv`` file itself. The ``rmmenv`` command will fail if there is no
+``.menv`` file in the current directory:
 
 ::
 
     $ cd my-non-python-project
-    $ rmcenv
-    No .cenv file in the current directory!
+    $ rmmenv
+    No .menv file in the current directory!
 
 Options
 -------
 
-**Setting a default conda environment**
+**Setting a default micromamba environment**
 
-If you want to set a default conda environment then you can also
-export ``AUTOSWITCH_DEFAULT_CONDAENV`` in your ``.zshrc`` file.
+If you want to set a default micromamba environment then you can also
+export ``AUTOSWITCH_DEFAULT_MICROMAMBAENV`` in your ``.zshrc`` file.
 
 ::
 
-    export AUTOSWITCH_DEFAULT_CONDAENV="mydefaultenv"
-    antigen bundle bckim92/zsh-autoswitch-conda
+    export AUTOSWITCH_DEFAULT_MICROMAMBAENV="mydefaultenv"
+    antigen bundle bckim92/zsh-autoswitch-micromamba
 
 **Set verbosity when changing environments**
 
@@ -228,45 +201,19 @@ a non-empty value.
 Security Warnings
 -----------------
 
-zsh-autoswitch-conda will warn you and refuse to activate a conda
+zsh-autoswitch-micromamba will warn you and refuse to activate a micromamba
 envionrment automatically in the following situations:
 
--  You are not the owner of the ``.cenv`` file found in a directory.
--  The ``.cenv`` file has weak permissions. I.e. it is readable or
+-  You are not the owner of the ``.menv`` file found in a directory.
+-  The ``.menv`` file has weak permissions. I.e. it is readable or
    writable by other users on the system.
 
 In both cases, the warnings should explain how to fix the problem.
 
 These are security measures that prevents other, potentially malicious
-users, from switching you to a conda environment you did not want to
+users, from switching you to a micromamba environment you did not want to
 switch to.
 
-Running Tests (not available now)
----------------------------------
-
-Install `zunit <https://zunit.xyz/>`__. Run ``zunit`` in the root
-directory of the repo.
-
-::
-
-    $ zunit
-    Launching ZUnit
-    ZUnit: 0.8.2
-    ZSH:   zsh 5.3.1 (x86_64-suse-linux-gnu)
-
-    ✔ _check_venv_path - returns nothing if not found
-    ✔ _check_venv_path - finds .venv in parent directories
-    ✔ _check_venv_path - returns nothing with root path
-    ✔ check_venv - Security warning for weak permissions
-
-NOTE: It is required that you use a minimum zunit version of 0.8.2
-
-
-.. _Zplug: https://github.com/zplug/zplug
-
-.. _Antigen: https://github.com/zsh-users/antigen
-
-.. _ZGen: https://github.com/tarjoilija/zgen
 
 .. |TravisCI| image:: https://travis-ci.org/MichaelAquilina/zsh-autoswitch-virtualenv.svg?branch=master
    :target: https://travis-ci.org/MichaelAquilina/zsh-autoswitch-virtualenv
@@ -277,8 +224,4 @@ NOTE: It is required that you use a minimum zunit version of 0.8.2
 .. |GPLv3| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
    :target: https://www.gnu.org/licenses/gpl-3.0
 
-TODO
-----
 
--  Modify test code
--  Modify TravisCI and Release image
